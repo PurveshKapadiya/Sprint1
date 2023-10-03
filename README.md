@@ -179,4 +179,44 @@ def us02_check_marriage_dates(families, individuals):
             if marriage_date < wife_birth_date:
                 errors.append(f"ERROR: FAMILY: US02: {fam_id}: Wife's birth date {wife_birth_date.strftime('%Y-%m-%d')} is after marriage date {marriage_date.strftime('%Y-%m-%d')}")
     return errors
+
+
+def us03_check_birth_before_death(individuals):
+    errors = []
+    for indi_id, indi_data in individuals.items():
+        if indi_data['birthday'] and indi_data['death']:
+            birth_date = datetime.strptime(indi_data['birthday'], '%d %b %Y')
+            death_date = datetime.strptime(indi_data['death'], '%d %b %Y')
+            if birth_date > death_date:
+                errors.append(f"ERROR: INDIVIDUAL: US03: {indi_id}: Birth date {birth_date.strftime('%Y-%m-%d')} is after death date {death_date.strftime('%Y-%m-%d')}")
+    return errors
+
+def us04_check_marriage_before_divorce(families):
+    errors = []
+    for fam_id, fam_data in families.items():
+        if fam_data['marriage_date'] and fam_data['divorce_date']:
+            marriage_date = datetime.strptime(fam_data['marriage_date'], '%d %b %Y')
+            divorce_date = datetime.strptime(fam_data['divorce_date'], '%d %b %Y')
+            if marriage_date > divorce_date:
+                errors.append(f"ERROR: FAMILY: US04: {fam_id}: Marriage date {marriage_date.strftime('%Y-%m-%d')} is after divorce date {divorce_date.strftime('%Y-%m-%d')}")
+    return errors
+
+
+def print_errors(errors):
+    for error in errors:
+        print(error)
+
+# Check user stories and print errors
+us01_errors = us01_check_dates(individuals)
+us02_errors = us02_check_marriage_dates(families, individuals)
+us03_errors = us03_check_birth_before_death(individuals)
+us04_errors = us04_check_marriage_before_divorce(families)
+
+# Print errors for user stories
+print("\nUser Story Errors:")
+print_errors(us01_errors)
+print_errors(us02_errors)
+print_errors(us03_errors)
+print_errors(us04_errors)
+
     
